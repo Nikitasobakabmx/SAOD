@@ -1,3 +1,4 @@
+#pragma once
 template<typename T>
 class Node
 {
@@ -6,6 +7,10 @@ class Node
         T data;
     
         Node();
+        Node(const Node<T> &copy)
+        {
+            data = copy.data;
+        }
         Node(const T &item)
         {
             data = item;

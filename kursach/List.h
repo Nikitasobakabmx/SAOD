@@ -20,6 +20,7 @@ public:
 	void push_front(const T& item) noexcept;
 	int getSize() const noexcept;
 	void find_and_erase(T value);
+	void sort();
 	~List();
 };
 template<typename T>
@@ -31,8 +32,8 @@ template<typename T>
 List<T>::List(const T &item)
 {
 	begin_ = new Node<T>(item);
-	end = begin_;
-	size_of_List++;
+	end_ = begin_;
+	size_++;
 }
 
 template<typename T>
@@ -45,7 +46,7 @@ template<typename T>
 void List<T>::operator= (const List<T> &copy)
 {
 	Node<T> *tmp;
-	while (begin_ != NULL)
+	while (begin_ != nullptr)
 	{
 		tmp = begin_;
 		delete tmp;
@@ -77,7 +78,7 @@ T List<T>::at(int pos) const
 	if (pos > size_)
 		throw except("You out of range!");
 	if(pos == size_)
-		return end->data;
+		return end_->data;
 	Node<T> *tmp = begin_;
 	for (int i = 0; i < pos + 1; i++)
 		tmp = tmp->next;
@@ -94,7 +95,7 @@ void List<T>::push_back(const T& item) noexcept
 		size_++;
 		return;
 	}
-	end->next = new Node<T>(item);
+	end_->next = new Node<T>(item);
 	end_ = end_->next;
 	size_++;
 	return;
@@ -125,26 +126,46 @@ void List<T>::find_and_erase(T value)//reduct
 	{
 		begin_ = tmp->next;
 		delete tmp;
-		size_of_List--;
+		size_--;
 		return;
 	}
 	while (tmp->next->data != value)
 	{
 		tmp = tmp->next;
-		if (tmp->next == NULL)
+		if (tmp->next == nullptr)
 			throw except("List haven't this element!");
 	}
 	Node<T> *tmpOne = tmp->next;
 	tmp->next = tmpOne->next;
-	size_of_List--;
+	size_--;
 	delete tmpOne;
+}
+
+template<typename T>
+void List<T>::sort()
+{
+	if(size_ == 0)
+		throw except((char*)"List is empty");
+	if(size_ == 1)
+		return;
+	List<T> *listTmp = new List<T>();
+	for(int i = 0; i < size_; i++)
+	{
+		T tmp = at(0);
+		for(int j = 0; j < size_ - i; i++)
+			if(at(i) > tmp)
+				tmp = at(i);
+		this->find_and_erase(tmp);
+		listTmp->push_back(tmp);
+	}
+	*(this) = *(listTmp);	
 }
 
 template<typename T>
 List<T>::~List()
 {
 	Node<T> *tmp;
-	while (begin_ != NULL)
+	while (begin_ != nullptr)
 	{
 		tmp = begin_;
 		begin_ = begin_->next;
