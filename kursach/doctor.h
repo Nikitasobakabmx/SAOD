@@ -1,8 +1,8 @@
 class doctor
 {
 public:
-    char FIO[25];
+    char *FIO = nullptr;
     char* job = nullptr;
     int room = 0;
-    char* schedule;
+    char* schedule = nullptr;//raspisanie
 };
