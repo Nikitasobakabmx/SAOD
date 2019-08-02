@@ -11,29 +11,40 @@ private:
 	Node<T> *end_ = nullptr;//reduct
 	int size_ = 0;//reduct
 public:
-	List();
+	List(void){};
 	List(const T &item);
 	List(const List<T> &copy);
 	void operator= (const List<T> &copy);
-	T at(int pos) const;
+	T& at(int pos);
+	Node<T>* atNode(int pos);
+	T& operator[](int pos);
 	void push_back(const T& item) noexcept;
 	void push_front(const T& item) noexcept;
 	int getSize() const noexcept;
 	void find_and_erase(T value);
 	void sort();
+	friend std::ostream& operator <<(std::ostream &os, List<T> &item)
+	{
+		Node<T> *tmp = item.begin_;
+		for(int i = 0; i < item.size_; i++)
+		{
+			os << *tmp << " : ";
+			tmp = tmp->next;
+		}
+		return os;
+	}
+	
 	~List();
 };
-template<typename T>
-List<T>::List()
-{
-}
+
 
 template<typename T>
 List<T>::List(const T &item)
 {
-	begin_ = new Node<T>(item);
-	end_ = begin_;
+	end_ = new Node<T>(item);
+	begin_ = end_;
 	size_++;
+	//std::cout << *begin_ << std::endl;
 }
 
 template<typename T>
@@ -52,17 +63,14 @@ void List<T>::operator= (const List<T> &copy)
 		delete tmp;
 		begin_ = begin_->next;
 	}
-
-	size_ = copy.size_;
-	int tSize = 0;
+	size_ = 0;
 	tmp = copy.begin_;
 	while(tmp != nullptr)
 	{
 		this->push_back(tmp->data);
 		tmp = tmp->next;
-		tSize++;
 	}
-	if(size_ != tSize)
+	if(size_ != copy.size_)
 		throw except((char*) "Huiovi list!\n");
 }
 
@@ -73,22 +81,35 @@ int List<T>::getSize() const noexcept
 }
 
 template<typename T>
-T List<T>::at(int pos) const
+T& List<T>::at(int pos)
+{
+	return atNode(pos)->data;
+}
+
+template<typename T>
+Node<T>* List<T>::atNode(int pos)
 {
 	if (pos > size_)
-		throw except("You out of range!");
+		throw except((char*)"You out of range!");
 	if(pos == size_)
-		return end_->data;
+		return end_;
 	Node<T> *tmp = begin_;
-	for (int i = 0; i < pos + 1; i++)
+	for (int i = 0; i < pos; i++)
 		tmp = tmp->next;
-	return tmp->data;
+	return tmp;
+}
+
+
+template<typename T>
+T& List<T>::operator[](int pos)
+{
+	return this->at(pos);
 }
 
 template<typename T>
 void List<T>::push_back(const T& item) noexcept
 {
-	if(begin_ = nullptr)
+	if(begin_ == nullptr)
 	{
 		begin_ = new Node<T>(item);
 		end_ = begin_;
@@ -133,7 +154,7 @@ void List<T>::find_and_erase(T value)//reduct
 	{
 		tmp = tmp->next;
 		if (tmp->next == nullptr)
-			throw except("List haven't this element!");
+			throw except((char*)"List haven't this element!");
 	}
 	Node<T> *tmpOne = tmp->next;
 	tmp->next = tmpOne->next;
@@ -149,16 +170,20 @@ void List<T>::sort()
 	if(size_ == 1)
 		return;
 	List<T> *listTmp = new List<T>();
+	//std::cout << size_ << std::endl;
 	for(int i = 0; i < size_; i++)
 	{
-		T tmp = at(0);
-		for(int j = 0; j < size_ - i; i++)
-			if(at(i) > tmp)
-				tmp = at(i);
-		this->find_and_erase(tmp);
-		listTmp->push_back(tmp);
+		Node<T> *tmp = atNode(0);
+		for(int j = 0; j < size_ - i; j++)
+		{
+			if(at(j) > tmp->data)
+			{
+				std::cout << size_ << std::endl;
+				tmp = atNode(j);
+			}
+		}
+		Node<T>::replace(atNode(size_-i), tmp);
 	}
-	*(this) = *(listTmp);	
 }
 
 template<typename T>

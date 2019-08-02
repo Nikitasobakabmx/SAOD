@@ -1,13 +1,13 @@
 #pragma once
 
 template<typeneme T>
-class Vertex
+class BinaryNode
 {
     public:
         T item;
-        Vertex *leftChild = nullptr;
-        Vertex *rightChild = nullptr;
+        BinaryNode *leftChild = nullptr;
+        BinaryNode *rightChild = nullptr;
 
-        Vertex();
-        Vertex(const T& item): this->item(item){};
+        BinaryNode();
+        BinaryNode(const T& item): this->item(item){};
 }
